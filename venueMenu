@@ -1,0 +1,334 @@
+#!/bin/bash
+
+patron_file="patron.txt"
+touch "$patron_file"
+
+#--------------task1------------------#
+while true; do
+ clear
+ echo -e "  \033[1mUniversity Venue Management Menu\033[0m"
+ echo
+ echo "  A - Register New Patron"
+ echo "  B - Search Patron Details"
+ echo "  C - Add New Venue" 
+ echo "  D - List Venue"
+ echo "  E - Book Venue"
+ echo 
+ echo "  Q - Exit from Program"
+ echo
+ echo -n "  Please select a choice: "
+
+ read choice
+
+ case "$choice" in
+
+#--------------task2------------------#
+
+	"A"|"a")
+	while true; do
+	clear
+	echo -e "  \033[1mPatron Registration\033[0m"
+	echo "  ===================="
+	
+	echo -n "  Patron ID (As per TAR UMT format): "
+	read patron_id
+
+	echo -n "  Patron Full Name (As per NRIC): "
+	read full_name
+
+	echo -n "  Contact Number: "
+	read contact_number
+
+	echo -n "  Email Address (As per TAR UMT format): "
+	read email_address
+
+	# store patron details
+	echo "${patron_id}:${full_name}:${contact_number}:${email_address}" >> patron.txt
+	echo
+	echo -e "  Press (q) to return to \033[1mUniversity Venue Management Menu\033[0m."
+	echo
+	echo -n "  Register Another Patron? (y)es or (q)uit: "
+	read register_another_patron
+
+	if [ "$register_another_patron" != "y" ] && [ "$register_another_patron" != "Y" ]; then
+                if [ "$register_another_patron" != "q" ] && [ "$register_another_patron" != "Q" ]; then
+		echo " Invalid input. Please enter 'y' to continue or 'q' to quit."
+                else
+		echo " Returning to University Venue Management Menu..."
+		fi
+		break
+	fi
+	done
+	;;
+
+	"B"|"b")
+	while true; do
+	clear
+	echo -e "\t\t\t\033[4mSearch Patron Details\033[0m "
+	echo
+	echo -n  " Enter Patron ID: "
+	read search_patron_id
+
+
+	patron_info=$(grep "$search_patron_id:" patron.txt)
+	if [ -n "$patron_info" ]; then
+		echo "---------------------------------------------------------------"
+		full_name=$(echo "$patron_info" | cut -d ":" -f 2)
+		contact_number=$(echo "$patron_info" | cut -d ":" -f 3)
+		email_address=$(echo "$patron_info" | cut -d ":" -f 4)
+
+		echo 
+		echo "  Full Name: $full_name"
+		echo "  Contact Number: $contact_number"
+		echo "  Email Address: $email_address"
+		echo
+	else
+		echo "  Patron not found."
+	fi
+	echo -e "  Press (q) to return to \033[1mUniversity Venue Management Menu.\033[0m"
+	echo
+	echo -n "  Search Another Patron? (y)es or (q)uit: "
+	read search_another_patron
+
+	if [ "$search_another_patron" != "y" ] && [ "$search_another_patron" != "Y" ]; then
+		if [ "$search_another_patron" != "q" ] && [ "$search_another_patron" != "Q" ]; then 
+			echo "  Invalid input. Please enter 'y' to continue or 'q' to quit."
+		else
+			echo "  Returning to University Venue Management Menu..."
+		fi
+		break
+	fi
+	done
+	;;
+
+
+#--------------task3------------------#
+
+	"C"|"c")
+	while true; do
+	clear
+	echo -e "\t\t\t\033[1mAdd New Venue\033[0m"
+	echo -e "\t\t\t\033[1m=============\033[0m"
+
+	echo -n "  Block Name: "
+	read block_name
+
+	echo -n "  Room Number: "
+	read room_number
+
+	echo -n "  Room Type: "
+	read room_type
+
+	echo -n "  Capacity: "
+	read capacity
+
+	echo -n "  Remarks: "
+	read remarks
+	
+	status="Available"
+	
+	echo "$block_name:$room_number:$room_type:$capacity:$remarks:Available" >> venue.txt
+	echo
+	echo -e "  Press (q) to return to \033[1mUniversity Venue Management Menu.\033[0m"
+	echo
+	echo -n "  Add Another New Venue? (y)es or (q)uit: "
+	read add_another_venue
+
+	if [ "$add_another_venue" != "y" ] && [ "$add_another_venue" != "Y" ]; then
+                if [ "$add_another_venue" != "q" ] && [ "$add_another_venue" != "Q" ]; then 
+                echo " Invalid input. Please enter 'y' to continue or 'q' to quit."
+                else
+                echo " Returning to University Venue Management Menu..."
+                fi
+                break
+        fi
+        done
+        ;;
+
+	"D"|"d")
+	while true; do
+	clear
+	echo -e "\t\t\t\t\t\033[4m\033[4mList Venue Details\033[0m\033[0m"
+	echo
+	echo -n -e "\t\t\t\t\tEnter Block Name: "
+	read block_name
+	echo "____________________________________________________________________________________________________"
+	echo
+	printf "%-20s%-20s%-12s%-40s%-15s\n" " Room Number:" "Room Type:" "Capacity:" "Remarks:" "Status:"
+	echo
+	while IFS=: read -r BlockName RoomNumber RoomType Capacity Remarks Status; do
+	if [[ "$BlockName" == "${block_name}"* ]]; then
+		printf "%-20s%-20s%-12s%-40s%-15s\n" " $RoomNumber" "$RoomType" "$Capacity" "$Remarks" "Available"
+
+	fi
+	done < venue.txt
+	echo
+	echo "____________________________________________________________________________________________________"
+	echo
+	echo -e " Press (q) to return to \033[1mUniversity Venue Management Menu.\033[0m"
+	echo
+	echo -n " Search Another Block Venue? (y)es or (q)uit: "
+	read search_another_venue
+
+	if [ "$search_another_venue" != "y" ] && [ "$search_another_venue" != "Y" ]; then
+                if [ "$search_another_venue" != "q" ] && [ "$search_another_venue" != "Q" ]; then 
+                echo " Invalid input. Please enter 'y' to continue or 'q' to quit."
+                else
+                echo " Returning to University Venue Management Menu..."
+                fi
+                break
+        fi
+        done
+        ;;
+
+
+#--------------task4------------------#
+
+	"E"|"e")
+	clear
+	#book venue
+	echo -e "\t\t\t\t\033[1mPatron Details Validation\033[0m"
+	echo -e "\t\t\t\t=========================="
+
+	while true; do
+	echo -n " Please enter the Patron's ID Number: "
+	read patron_id
+
+	patron_name=$(grep "$patron_id:" patron.txt | cut -d ':' -f 2)
+        if [ -z "$patron_name" ]; then
+		echo " Patron not found."
+		sleep 1
+		read -n 1 -s -r -p " Press any key to continue..."
+		clear
+		echo -e "\t\t\t\t\033[1mPatron Details Validation\033[0m"
+		echo -e "\t\t\t\t=========================="
+	else
+		break
+	fi
+	done
+	
+	echo
+	echo " Patron Name: $patron_name"
+	echo
+	echo -n -e " Press \033[1m(n)\033[0m to proceed \033[1mBook Venue\033[0m or \033[1m(q)\033[0m to return to \033[1mUniversity Venue Management Menu\033[0m: "
+	read proceed_booking
+
+	if [ "$proceed_booking" == "q" ]; then
+		continue
+	elif [ "$proceed_booking" != "n" ]; then
+		echo " Invalid option. Returning to University Venue Management Menu..."
+		read -n 1 -s -r -p "Press any key to continue..."
+		
+	fi
+
+	clear
+	echo -e "\t\t\t\t\t\033[1mBooking Venue\033[0m"
+	echo -e  "\t\t\t\t\t\033[1m==============\033[0m"
+
+#------------Check current DATE------------------#
+	current_date=$(date +%m/%d/%Y)
+#---------------To check date 1day before current date----------------------#
+	booking_date=$(date -d "$current_date - 1 day" +%m/%d/%Y)
+	
+	while true; do
+	echo -n "  Please enter the Room Number: "
+	read room_number
+
+	room_info=$(grep -E "^([^:]*:){1}$room_number:" venue.txt | cut -d: -f3-5)
+	
+	if [ -n "$room_info" ]; then
+		IFS=":" read -r room_type capacity remarks <<< "$room_info"
+		echo -e "  Room Type\t: $room_type"
+		echo -e "  Capacity\t: $capacity"
+		echo -e "  Remarks\t: $remarks"
+		break
+	else
+		echo "  Room not found."
+		sleep 3
+		clear
+		echo -e "\t\t\t\t\t\033[1mBooking Venue\033[0m"
+		echo -e  "\t\t\t\t\t\033[1m==============\033[0m"
+		
+	fi
+	done
+	
+	echo "  Status:"
+
+	echo "_______________________________________________________________________________________________________________________________"
+	echo " Notes: The booking hours shall be from 8am to 8pm only. The booking duration shall be at least 30 minutes per booking."
+	echo
+	echo -n -e " Please \033[1menter\033[0m the following details: "
+	echo -e "\n"
+	echo -n "  Booking Date (mm/dd/yyyy): "
+	read booking_date
+
+	while true; do
+	echo -n "  Time From (hh:mm): "
+	read time_from
+
+	echo -n "  Time To (hh:mm): "
+	read time_to
+	if [[ ! $time_from =~ ^[0-2][0-9]:[0-5][0-9]$ || ! $time_to =~ ^[0-2][0-9]:[0-5][0-9]$ ]]; then
+		echo "Invalid format. Please use the hh:mm format."
+	else
+		break
+	fi
+	done	
+
+	echo -n "  Reasons for Booking: "
+	read booking_reason
+	echo
+	echo -n -e "  Press \033[1m(s)\033[0m to save and generate the venue booking details or Press \033[1m(c)\033[0m to cancel the Venue Booking and return to University Venue Management Menu: "
+        read save_or_cancel
+
+        if [ "save_or_cancel" = 'n' ]; then
+		echo " Venue booking cancelled. The system is now clearing the data."
+		sleep 5
+		echo " Returning to University Venue Management Menu..."
+                
+        else
+		clear
+		room_available="Available"
+		if [ "$room_available" == "Available" ]; then
+			echo "$patron_id:$patron_name:$room_number:$booking_date:$time_from:$time_to:$booking_reason" >> booking.txt
+
+	#Generate the venue booking receipt
+			receipt_name="${patron_id}_${room_number}_${booking_date//\//-}.txt"
+			{
+				printf "%-31sVenue Booking Receipt\n\n"
+				printf " %-60s%-10s\n\n" "Patron ID : $patron_id" "Patron Name : $patron_name"
+				printf " Room Number: $room_number\n\n"
+				printf " Date Booking: $booking_date\n\n"
+				printf " %-60s%-15s\n\n" "Time From : $time_from" "Time To : $time_to"
+				printf " Reason for Booking: $booking_reason.\n\n\n"
+				printf "%-11sThis is a computer generated receipt with no signature required.\n\n\n"
+				printf "%-26sPrinted on $(date '+%m-%d-%Y %H:%M%p').\n\n"
+			} > "$receipt_name"
+			
+			printf "\033[1m%-31sVenue Booking Receipt\033[0m\n\n"
+			printf " %-60s%-10s\n\n" "Patron ID : $patron_id" "Patron Name : $patron_name"
+			printf " Room Number: $room_number\n\n"
+			printf " Date Booking: $booking_date\n\n"
+			printf " %-60s%-15s\n\n" "Time From : $time_from" "Time To : $time_to"
+			printf " Reason for Booking: $booking_reason.\n\n\n"
+			printf "\033[1m%-11sThis is a computer generated receipt with no signature required.\033[0m\n\n\n"
+			printf "\033[1m%-26sPrinted on $(date '+%m-%d-%Y %H:%M%p').\033[0m\n\n"
+
+		else
+			echo " Room is not avilable."
+		fi
+	fi
+	;;
+
+	"Q"|"q")
+		echo " Exiting program..."
+		exit 0
+		;;
+
+	*)
+		echo " Invalid choice. Please select a valid option."
+		;;
+	esac
+
+	read -p " Press Enter to continue..."
+done
